@@ -40,7 +40,8 @@
 <body>
   <form id="registerForm">
     <h2>Register</h2>
-    <input type="text" placeholder="Username" name="username" required><br>
+    <input type="text" name="full_name" placeholder="Full Name" required />
+    <input type="text" name="username" placeholder="Username" required />
     <input type="email" name="email" placeholder="Email" required />
     <input type="password" name="password" placeholder="Password" required />
     <button type="submit">Register</button>
@@ -57,6 +58,7 @@
       const formData = new FormData(form);
       const data = {
         full_name: formData.get('full_name'),
+        username: formData.get('username'),
         email: formData.get('email'),
         password: formData.get('password')
       };
@@ -72,9 +74,15 @@
 
         const result = await res.json();
         if (res.ok) {
+          // Save to localStorage to auto-login later
+          localStorage.setItem('user', JSON.stringify(result.user));
           message.style.color = 'green';
           message.textContent = result.message;
-          form.reset();
+
+          // Redirect to dashboard or walk page
+          setTimeout(() => {
+            window.location.href = '/index.html'; // or your main page
+          }, 1000);
         } else {
           message.style.color = 'red';
           message.textContent = result.message || 'Registration failed';

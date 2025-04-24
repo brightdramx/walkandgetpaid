@@ -10,14 +10,14 @@
   <!-- Login Screen -->
   <div id="loginScreen" class="container">
     <h2>Welcome to DBCD</h2>
-    <input type="text" id="username" placeholder="Enter your name" />
+    <input type="text" id="username" id="welcomeText" placeholder="Enter your name" />
     <button onclick="login()">Start Walking</button>
   </div>
 
   <!-- Dashboard Screen -->
   <div id="appScreen" class="container hidden">
     <h1>DBCD</h1>
-
+    
     <!-- Step Progress Circle -->
     <div class="circle-container">
       <div class="circle">
@@ -41,6 +41,20 @@
   </div>
 
   <!-- Add JS -->
+  <script>
+    const savedUser = localStorage.getItem('user');
+    if (!savedUser) {
+      // If not registered, redirect to register page
+      window.location.href = '/register.html';
+    } else {
+      const user = JSON.parse(savedUser);
+      console.log('Welcome back:', user.username);
+  
+      // You can now show user info or allow access to Start Walk button
+      document.getElementById('welcomeText').textContent = `Hi, ${user.full_name}! Ready to walk?`;
+    }
+  </script>
+  
   <script src="scripts.js"></script>
   <a href="register.html">Register</a>
 <a href="login.html">Login</a>
