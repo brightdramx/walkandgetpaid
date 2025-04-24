@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DBCD - Walk and Get Paid</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="loginScreen" class="container">
+    <h2>Welcome to DBCD</h2>
+    <input type="text" id="username" placeholder="Enter your name" />
+    <button onclick="login()">Start Walking</button>
+  </div>
+
+  <!-- Dashboard Screen -->
+  <div id="appScreen" class="container hidden">
+    <h1>DBCD</h1>
+
+    <!-- Step Progress Circle -->
+    <div class="circle-container">
+      <div class="circle">
+        <span id="stepCount">0</span>
+        <p>Steps</p>
+      </div>
+      <p class="goal">Daily 7,000</p>
+      <p class="status">Goal Completed</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions">
+      <button onclick="showLeaderboard()">
+        <img src="user-icon.png" alt="Leaderboard" />
+        
+      </button>
+      <button onclick="showReferral()">
+        <img src="referral-icon.png" alt="Referral" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Add JS -->
+  <script src="scripts.js"></script>
+</body>
+</html>
