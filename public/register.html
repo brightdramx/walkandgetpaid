@@ -75,7 +75,9 @@
         const result = await res.json();
         if (res.ok) {
           // Save to localStorage to auto-login later
-          localStorage.setItem('user', JSON.stringify(result.user));
+         
+      // ✅ Save to localStorage
+      localStorage.setItem('dbcd_user', JSON.stringify({ email: data.email }));
           message.style.color = 'green';
           message.textContent = result.message;
 
