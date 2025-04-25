@@ -1,11 +1,10 @@
 // routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt'); // <-- ✅ Add this line
+const bcrypt = require('bcrypt');
 const db = require('../db');
 
-// Register a new user
-
+// ✅ Register a New User
 router.post('/register', async (req, res) => {
   const { full_name, username, email, password } = req.body;
 
@@ -23,8 +22,7 @@ router.post('/register', async (req, res) => {
       db.query(insertQuery, [full_name, username, email, hashedPassword], (err) => {
         if (err) return res.status(500).json({ message: 'Error registering user', error: err });
 
-        // ✅ Send proper JSON response here
-        return res.status(201).json({ message: 'User registered successfully' });
+        res.status(201).json({ message: 'User registered successfully' });
       });
     });
   } catch (err) {
@@ -32,8 +30,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-
-// Update balance
+// ✅ Update Balance
 router.post('/update-balance', (req, res) => {
   const { userId, amount } = req.body;
   db.query('UPDATE users SET balance = balance + ? WHERE id = ?', [amount, userId], (err) => {
@@ -42,7 +39,7 @@ router.post('/update-balance', (req, res) => {
   });
 });
 
-// Get user
+// ✅ Get User by ID
 router.get('/user/:id', (req, res) => {
   db.query('SELECT * FROM users WHERE id = ?', [req.params.id], (err, results) => {
     if (err) return res.status(500).send(err);

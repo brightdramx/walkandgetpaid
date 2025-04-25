@@ -1,38 +1,32 @@
-// 📁 server.js
+// server/server.js
 const express = require('express');
+const bodyParser = require('body-parser');
 const cors = require('cors');
-const path = require('path');
 require('dotenv').config();
 
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(bodyParser.json());
+
+// ✅ Routes
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
 
-const app = express();
-const PORT = 5000;
+app.use('/api/users', userRoutes); // /api/users/register, /api/users/user/:id, etc.
+app.use('/api/auth', authRoutes);  // /api/auth/login
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// ✅ Serve frontend static files (optional, if frontend is inside /public)
+app.use(express.static(path.join(__dirname, '../public')));
 
-// Routes
-app.use('/api/users', userRoutes);
-app.use('/api/auth', authRoutes);
+// ✅ Catch-all route for SPA (optional)
+//app.get('*', (req, res) => {
+  //res.sendFile(path.join(__dirname, '../public/index.html'));
+//});
 
-// Serve static HTML files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Serve login.html on /login
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-// Serve register.html on /register
-app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'register.html'));
-});
-
-// Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
