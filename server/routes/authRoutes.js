@@ -6,7 +6,8 @@ const router = express.Router();
 
 // ✅ Login Route Only
 router.post('/login', (req, res) => {
-  const { email, password } = req.body;
+  console.log('Login attempt:', req.body);
+  const { full_name, username, email, password } = req.body;
   const query = 'SELECT * FROM users WHERE email = ?';
   
   db.query(query, [email], async (err, results) => {

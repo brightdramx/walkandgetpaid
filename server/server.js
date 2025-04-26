@@ -30,3 +30,9 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+
+
+app.use((err, req, res, next) => {
+  console.error('Server error:', err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
+});
