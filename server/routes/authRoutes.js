@@ -7,6 +7,32 @@ const router = express.Router();
 
 
 
+// Register Route
+router.post('/register', async (req, res) => {
+  const { full_name, username, email, phone, password } = req.body;
+
+  if (!full_name || !username || !email || !phone || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const query = 'INSERT INTO users (full_name, username, email, phone, password) VALUES (?, ?, ?, ?, ?)';
+
+    db.query(query, [full_name, username, email, phone, hashedPassword], (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Database error' });
+      }
+
+      return res.status(201).json({ message: 'User registered successfully' });
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 // ✅ Login Route Only
 router.post('/login', (req, res) => {
