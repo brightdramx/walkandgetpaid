@@ -15,6 +15,16 @@ router.post('/login', (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
+    
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
+  
+  
+    if (results.length === 0) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
     const user = results[0];
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
