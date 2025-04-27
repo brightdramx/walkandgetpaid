@@ -57,54 +57,78 @@
     <input type="text" name="username" placeholder="Username" required />
     <input type="email" name="email" placeholder="Email" required />
     <input type="text" name="phone" placeholder="Phone Number" required />
-    <input type="password" name="password" placeholder="Password" required />
-    <button type="submit">Register</button>
+    <input type="password" name="password" placeholder="Password" required autocomplete="new-password" />
+    <input type="password" name="confirm_password" placeholder="Confirm Password" required />
+    <button type="submit" id="submitBtn">Register</button>
     <p id="message"></p>
-
-    <a href="/login.html">Already have an account? Login</a>
-    <a href="/forgot-password.html">Forgot password?</a>
   </form>
 
   <script>
-    // 🛡 Auto-login if user exists
-    if (localStorage.getItem('dbcd_user')) {
-      window.location.href = '/index.html'; // Already logged in
-    }
-
     const form = document.getElementById('registerForm');
     const message = document.getElementById('message');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // ✅ AUTO-LOGIN CHECK
+    window.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('dbcd_user'));
+      if (user) {
+        window.location.href = '/index.html'; // Dashboard page
+      }
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const formData = new FormData(form);
-      const data = {
-        full_name: formData.get('full_name'),
-        username: formData.get('username'),
-        email: formData.get('email'),
-        phone: formData.get('phone'),
-        password: formData.get('password')
-      };
+      const fullName = formData.get('full_name');
+      const username = formData.get('username');
+      const email = formData.get('email');
+      const phone = formData.get('phone');
+      const password = formData.get('password');
+      const confirmPassword = formData.get('confirm_password');
+
+      // ✋ Password length validation
+      if (password.length < 6) {
+        message.style.color = 'red';
+        message.textContent = 'Password must be at least 6 characters long.';
+        return;
+      }
+
+      // ✋ Password match validation
+      if (password !== confirmPassword) {
+        message.style.color = 'red';
+        message.textContent = 'Passwords do not match.';
+        return;
+      }
+
+      const data = { full_name: fullName, username, email, phone, password };
 
       try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Registering...';
+        message.textContent = '';
+
         const res = await fetch('/api/auth/register', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
         const result = await res.json();
         if (res.ok) {
-          // ✅ Save login status
-          localStorage.setItem('dbcd_user', JSON.stringify({ email: data.email }));
-
           message.style.color = 'green';
           message.textContent = result.message;
 
+          // ✅ Save full user info to localStorage
+          localStorage.setItem('dbcd_user', JSON.stringify({
+            email: data.email,
+            username: data.username,
+            full_name: data.full_name,
+            phone: data.phone
+          }));
+
           setTimeout(() => {
-            window.location.href = '/index.html'; // Go to dashboard
+            window.location.href = '/index.html';
           }, 1000);
         } else {
           message.style.color = 'red';
@@ -113,6 +137,9 @@
       } catch (err) {
         message.style.color = 'red';
         message.textContent = 'Error: ' + err.message;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Register';
       }
     });
   </script>
