@@ -4,6 +4,10 @@ const bcrypt = require('bcrypt');
 const db = require('../db');
 const router = express.Router();
 
+
+
+
+
 // ✅ Login Route Only
 router.post('/login', (req, res) => {
   console.log('Login attempt:', req.body);
@@ -35,4 +39,73 @@ router.post('/login', (req, res) => {
   });
 });
 
+
+// Forgot Password (Request Reset)
+router.post('/forgot-password', (req, res) => {
+  const { email_or_phone } = req.body;
+
+  if (!email_or_phone) {
+    return res.status(400).json({ message: 'Email or phone is required' });
+  }
+
+  // Find user by email or phone
+  const findUser = 'SELECT * FROM users WHERE email = ? OR phone = ?';
+  db.query(findUser, [email_or_phone, email_or_phone], (err, results) => {
+    if (err) return res.status(500).json({ message: 'Database error' });
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No account found with that email or phone' });
+    }
+
+    const user = results[0];
+
+    // Generate random 6-digit reset code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Update user's reset_code
+    const updateResetCode = 'UPDATE users SET reset_code = ? WHERE id = ?';
+    db.query(updateResetCode, [resetCode, user.id], (err, updateResult) => {
+      if (err) return res.status(500).json({ message: 'Database error during reset code update' });
+
+      // 🛎 Normally you would send code via SMS or Email here
+      console.log('Password reset code:', resetCode); // For now, just log it
+
+      res.json({ message: 'Reset code generated. Please check your email or phone (for now, check console).' });
+    });
+  });
+});
+
+
+// Verify Reset Code and Set New Password
+router.post('/reset-password', async (req, res) => {
+  const { email_or_phone, reset_code, new_password } = req.body;
+
+  if (!email_or_phone || !reset_code || !new_password) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  // Find user
+  const findUser = 'SELECT * FROM users WHERE (email = ? OR phone = ?) AND reset_code = ?';
+  db.query(findUser, [email_or_phone, email_or_phone, reset_code], async (err, results) => {
+    if (err) return res.status(500).json({ message: 'Database error' });
+
+    if (results.length === 0) {
+      return res.status(400).json({ message: 'Invalid reset code or email/phone' });
+    }
+
+    const hashedPassword = await bcrypt.hash(new_password, 10);
+
+    // Update password and clear reset_code
+    const updatePassword = 'UPDATE users SET password = ?, reset_code = NULL WHERE id = ?';
+    db.query(updatePassword, [hashedPassword, results[0].id], (err, updateResult) => {
+      if (err) return res.status(500).json({ message: 'Database error during password reset' });
+
+      res.json({ message: 'Password has been reset successfully!' });
+    });
+  });
+});
+
+
 module.exports = router;
+
+
