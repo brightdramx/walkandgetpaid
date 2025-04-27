@@ -53,11 +53,11 @@
 
   <form id="registerForm">
     <h2>Register</h2>
-    <input type="text" name="full_name" placeholder="Full Name" required />
+    <input type="text" name="full_name" autocomplete="full_name" placeholder="Full Name" required />
     <input type="text" name="username" autocomplete="username" placeholder="Username" required />
-    <input type="email" name="email" placeholder="Email" required />
-    <input type="text" name="phone" placeholder="Phone Number" required />
-    <input type="password" name="password" placeholder="Password"  />
+    <input type="email" name="email" autocomplete="email" placeholder="Email" required />
+    <input type="text" name="phone" autocomplete="phone" placeholder="Phone Number" required />
+    <input type="password" name="password" autocomplete="new-password" placeholder="Password"  />
     <input type="password" name="confirm_password" placeholder="Confirm Password" required />
     <button type="submit" id="submitBtn">Register</button>
     <p id="message"></p>
@@ -108,7 +108,7 @@
         submitBtn.textContent = 'Registering...';
         message.textContent = '';
 
-        const res = await fetch('http://localhost:5000/api/auth/register', {
+        const res = await fetch('http://localhost:3000/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
