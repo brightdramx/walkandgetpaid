@@ -1,3 +1,31 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const startWalkingBtn = document.getElementById('startWalkingBtn');
+  const usernameInput = document.getElementById('username');
+  const welcomeText = document.getElementById('welcomeText');
+
+  startWalkingBtn.addEventListener('click', () => {
+    const username = usernameInput.value.trim();
+
+    if (username.length === 0) {
+      alert('Please enter your name first!');
+      return;
+    }
+
+    // Save user name (optional)
+    localStorage.setItem('user', JSON.stringify({ full_name: username }));
+
+    // Update the welcome text
+    welcomeText.textContent = `Hi, ${username}! Ready to walk?`;
+
+    // Hide login screen and show app
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('appScreen').classList.remove('hidden');
+
+    console.log('Walking started for:', username);
+  });
+});
+
+
 // Real distance tracking with Geolocation
 let previousPosition = null;
 let totalDistance = 0;
