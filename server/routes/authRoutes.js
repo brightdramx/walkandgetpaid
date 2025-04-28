@@ -8,23 +8,51 @@ const router = express.Router();
 
 
 
-// ✅ Login Route Only
+router.post('/register', async (req, res) => {
+  const { full_name, username, email, phone, password } = req.body;
+
+  if (!full_name || !username || !email || !phone || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const query = 'INSERT INTO users (full_name, username, email, phone, password) VALUES (?, ?, ?, ?, ?)';
+
+    db.query(query, [full_name, username, email, phone, hashedPassword], (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Database error' });
+      }
+
+      return res.status(201).json({ message: 'User registered successfully' });
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
+
+// ✅ Login Route
 router.post('/login', (req, res) => {
   console.log('Login attempt:', req.body);
-  const { full_name, username, email, password } = req.body;
-  const query = 'SELECT * FROM users WHERE email = ?';
-  
-  db.query(query, [email], async (err, results) => {
-    if (err || results.length === 0) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+  const { email, password } = req.body; // Only email and password needed
 
-    
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required' });
   }
+
+  const query = 'SELECT * FROM users WHERE email = ?';
   
-  
+  db.query(query, [email], async (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+
     if (results.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -38,6 +66,9 @@ router.post('/login', (req, res) => {
     }
   });
 });
+
+module.exports = router;
+
 
 
 // Forgot Password (Request Reset)

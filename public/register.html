@@ -68,13 +68,6 @@
     const message = document.getElementById('message');
     const submitBtn = document.getElementById('submitBtn');
 
-    // ✅ AUTO-LOGIN CHECK
-    window.addEventListener('DOMContentLoaded', () => {
-      const user = JSON.parse(localStorage.getItem('dbcd_user'));
-      if (user) {
-        window.location.href = '/index.html'; // Dashboard page
-      }
-    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
