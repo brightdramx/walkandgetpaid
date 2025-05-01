@@ -3,12 +3,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
+const bcrypt = require('bcryptjs');
 
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+app.use(express.json()); // ✅ REQUIRED to parse JSON body
 app.use(cors());
 app.use(bodyParser.json());
 
