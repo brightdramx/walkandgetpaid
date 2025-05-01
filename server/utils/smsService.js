@@ -6,8 +6,8 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
-// Initialize Twilio client
-const client = twilio(accountSid, authToken);
+// Initialize Twilio client 
+const client = twilio(accountSid, authToken); 
 
 // Function to send SMS
 const sendSMS = async (to, message) => {
@@ -15,7 +15,7 @@ const sendSMS = async (to, message) => {
     const response = await client.messages.create({
       body: message,
       from: twilioPhoneNumber, // Your Twilio number
-      to: to, // Destination number
+      to: to, // Destination number 
     });
 
     console.log('SMS sent successfully:', response.sid);

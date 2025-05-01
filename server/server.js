@@ -18,14 +18,18 @@ const authRoutes = require('./routes/authRoutes');
 
 app.use('/api/users', userRoutes); // /api/users/register, /api/users/user/:id, etc.
 app.use('/api/auth', authRoutes);  // /api/auth/login
+app.use('/api/auth', require('./routes/authRoutes'));
+
 
 // ✅ Serve frontend static files (optional, if frontend is inside /public)
 app.use(express.static(path.join(__dirname, '../public')));
 
 // ✅ Catch-all route for SPA (optional)
+// ✅ Correct
 //app.get('*', (req, res) => {
-  //res.sendFile(path.join(__dirname, '../public/index.html'));
+//res.sendFile(path.join(__dirname, '../public/index.html'));
 //});
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

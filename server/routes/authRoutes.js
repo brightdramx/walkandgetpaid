@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const db = require('../db');
 const router = express.Router();
 
+
 // If you have your own SMS sending function, import it here
 const { sendSMS } = require('../utils/smsService'); // 🔥 We will build smsService.js separately
 
@@ -59,6 +60,8 @@ router.post('/login', (req, res) => {
     }
   });
 });
+
+
 
 // ✅ Forgot Password (Request Reset)
 router.post('/forgot-password', (req, res) => {
@@ -116,6 +119,9 @@ router.post('/reset-password', async (req, res) => {
 
     const user = results[0];
     const hashedPassword = await bcrypt.hash(new_password, 10);
+    // Send SMS
+    await sendSMS(user.phone, `Your password reset code is: ${reset_code}`);
+
 
     const updatePassword = 'UPDATE users SET password = ?, reset_code = NULL WHERE id = ?';
     db.query(updatePassword, [hashedPassword, user.id], (err) => {

@@ -96,7 +96,7 @@
     const togglePassword = document.getElementById('togglePassword');
     const submitBtn = document.getElementById('submitBtn');
 
-    // ✅ AUTO-LOGIN CHECK
+  
    
 
     togglePassword.addEventListener('click', () => {
@@ -124,11 +124,15 @@
         submitBtn.textContent = 'Logging in...';
         message.textContent = '';
 
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
+        const res = await fetch(`${BASE_URL}/api/auth/login`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({email, password})
+})
+.then(res => res.json())
+.then(data => console.log(data))
+.catch(err => console.log(err));
+
 
         const result = await res.json();
         if (res.ok) {
@@ -155,6 +159,8 @@
         submitBtn.textContent = 'Login';
       }
     });
+
+    
   </script>
 
 </body>
